@@ -1,0 +1,13 @@
+# normalise line endings for text, keep binaries untouched
+* text=auto eol=lf
+*.sh text eol=lf
+*.stl binary
+*.STL binary
+*.dae binary
+*.png binary
+*.jpg binary
+*.pdf binary
+*.pgm binary
+*.ply binary
+*.db binary
+*.mcap binary

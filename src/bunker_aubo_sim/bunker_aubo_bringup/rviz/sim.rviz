@@ -1,0 +1,123 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Help Height: 0
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Time
+    Name: Time
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 1
+      Plane Cell Count: 30
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+        Depth: 1
+      Visual Enabled: true
+      Collision Enabled: false
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Moving track treads
+      Enabled: true
+      Topic:
+        Value: /track_treads
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+      Show Names: true
+      Show Arrows: true
+      Marker Scale: 0.3
+    - Class: rviz_default_plugins/PointCloud2
+      Name: LiDAR (/lidar/points)
+      Enabled: true
+      Topic:
+        Value: /lidar/points
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Style: Points
+      Size (Pixels): 2
+      Color Transformer: AxisColor
+      Axis: Z
+      Autocompute Value Bounds: false
+      Min Value: -0.9
+      Max Value: 1.6
+      Decay Time: 0
+      Position Transformer: XYZ
+    - Class: rviz_default_plugins/Odometry
+      Name: EKF odometry
+      Enabled: true
+      Topic:
+        Value: /odometry/filtered
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Keep: 200
+      Position Tolerance: 0.1
+      Angle Tolerance: 0.1
+      Shape:
+        Value: Arrow
+        Color: 0; 200; 255
+        Shaft Length: 0.3
+        Shaft Radius: 0.02
+        Head Length: 0.08
+        Head Radius: 0.05
+      Covariance:
+        Value: false
+    - Class: rviz_default_plugins/Image
+      Name: Base camera RGB
+      Enabled: true
+      Topic:
+        Value: /base_camera/color/image_raw
+        Depth: 2
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Normalize Range: true
+    - Class: rviz_default_plugins/Image
+      Name: Wrist camera RGB
+      Enabled: true
+      Topic:
+        Value: /wrist_camera/color/image_raw
+        Depth: 2
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Normalize Range: true
+  Enabled: true
+  Global Options:
+    Fixed Frame: odom
+    Background Color: 40; 40; 45
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/Measure
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 6
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0.5
+      Pitch: 0.6
+      Yaw: 3.6
+      Target Frame: base_footprint
+    Saved: ~
+Window Geometry:
+  Height: 1000
+  Width: 1600

@@ -1,0 +1,2 @@
+# nothing to import, all dependencies are installed from apt via rosdep
+repositories: {}

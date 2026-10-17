@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="grip_body_x"   value="0.06"/>
+  <xacro:property name="grip_body_y"   value="0.12"/>
+  <xacro:property name="grip_body_z"   value="0.05"/>
+  <xacro:property name="coupling_r"    value="0.04"/>
+  <xacro:property name="coupling_h"    value="0.012"/>
+  <xacro:property name="finger_x"      value="0.02"/>
+  <xacro:property name="finger_y"      value="0.012"/>
+  <xacro:property name="finger_z"      value="0.08"/>
+  <xacro:property name="finger_stroke" value="0.04"/>
+
+  <xacro:macro name="parallel_gripper" params="parent *origin">
+
+    <joint name="gripper_mount_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="gripper_base_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <link name="gripper_base_link">
+      <visual>
+        <origin xyz="0 0 ${coupling_h / 2.0}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${coupling_r}" length="${coupling_h}"/></geometry>
+        <material name="aluminium"/>
+      </visual>
+      <visual>
+        <origin xyz="0 0 ${coupling_h + grip_body_z / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${grip_body_x} ${grip_body_y} ${grip_body_z}"/></geometry>
+        <material name="gripper_dark"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${(coupling_h + grip_body_z) / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${grip_body_x} ${grip_body_y} ${coupling_h + grip_body_z}"/></geometry>
+      </collision>
+      <xacro:box_inertia m="0.6" x="${grip_body_x}" y="${grip_body_y}" z="${coupling_h + grip_body_z}">
+        <origin xyz="0 0 ${(coupling_h + grip_body_z) / 2.0}" rpy="0 0 0"/>
+      </xacro:box_inertia>
+    </link>
+
+    <xacro:macro name="finger" params="side sign">
+      <link name="gripper_${side}_finger_link">
+        <visual>
+          <origin xyz="0 ${sign * finger_y / 2.0} ${finger_z / 2.0}" rpy="0 0 0"/>
+          <geometry><box size="${finger_x} ${finger_y} ${finger_z}"/></geometry>
+          <material name="aluminium"/>
+        </visual>
+        <collision>
+          <origin xyz="0 ${sign * finger_y / 2.0} ${finger_z / 2.0}" rpy="0 0 0"/>
+          <geometry><box size="${finger_x} ${finger_y} ${finger_z}"/></geometry>
+        </collision>
+        <xacro:box_inertia m="0.05" x="${finger_x}" y="${finger_y}" z="${finger_z}">
+          <origin xyz="0 ${sign * finger_y / 2.0} ${finger_z / 2.0}" rpy="0 0 0"/>
+        </xacro:box_inertia>
+      </link>
+
+      <joint name="gripper_${side}_finger_joint" type="prismatic">
+        <parent link="gripper_base_link"/>
+        <child link="gripper_${side}_finger_link"/>
+        <origin xyz="0 0 ${coupling_h + grip_body_z}" rpy="0 0 0"/>
+        <axis xyz="0 ${sign} 0"/>
+        <limit lower="0.0" upper="${finger_stroke}" effort="60.0" velocity="0.15"/>
+        <dynamics damping="1.0" friction="0.0"/>
+      </joint>
+
+      <gazebo reference="gripper_${side}_finger_link">
+        <mu1>1.2</mu1>
+        <mu2>1.2</mu2>
+      </gazebo>
+    </xacro:macro>
+
+    <xacro:finger side="left"  sign="1"/>
+    <xacro:finger side="right" sign="-1"/>
+
+    <link name="gripper_tcp"/>
+    <joint name="gripper_tcp_joint" type="fixed">
+      <parent link="gripper_base_link"/>
+      <child link="gripper_tcp"/>
+      <origin xyz="0 0 ${coupling_h + grip_body_z + finger_z - 0.01}" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>

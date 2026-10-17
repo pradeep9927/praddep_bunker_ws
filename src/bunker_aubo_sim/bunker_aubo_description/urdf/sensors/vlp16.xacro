@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="vlp_r" value="0.05165"/>
+  <xacro:property name="vlp_h" value="0.0717"/>
+
+  <xacro:macro name="vlp16" params="name parent *origin">
+    <xacro:property name="c" value="${sensors_cfg['lidar']}"/>
+    <xacro:property name="h_step" value="${2.0 * pi / c['horizontal_samples']}"/>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <geometry><cylinder radius="${vlp_r}" length="${vlp_h}"/></geometry>
+        <material name="sensor_black"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="${vlp_r}" length="${vlp_h}"/></geometry>
+      </collision>
+      <xacro:cylinder_inertia m="0.83" r="${vlp_r}" h="${vlp_h}">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:cylinder_inertia>
+    </link>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}_sensor" type="gpu_lidar">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>${c['update_rate']}</update_rate>
+        <topic>lidar</topic>
+        <gz_frame_id>${name}_link</gz_frame_id>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>${c['horizontal_samples']}</samples>
+              <resolution>1</resolution>
+              <min_angle>${-pi}</min_angle>
+              <max_angle>${pi - h_step}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${c['vertical_samples']}</samples>
+              <resolution>1</resolution>
+              <min_angle>${c['vertical_min_angle']}</min_angle>
+              <max_angle>${c['vertical_max_angle']}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${c['range_min']}</min>
+            <max>${c['range_max']}</max>
+            <resolution>${c['range_resolution']}</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${c['noise_stddev']}</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

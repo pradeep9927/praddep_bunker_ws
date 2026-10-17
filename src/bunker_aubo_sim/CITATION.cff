@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "bunker_aubo_sim: BUNKER + AUBO-i5 mobile manipulator simulation with operator GUI, multi-sensor SLAM and Nav2"
+authors:
+  - family-names: Nahak
+    given-names: Pradeep
+    email: praddepnahak2008@gmail.com
+version: 1.2.0
+date-released: 2026-10-18
+license: Apache-2.0
+keywords:
+  - ROS 2
+  - Gazebo Harmonic
+  - mobile manipulator
+  - SLAM
+  - RTAB-Map
+  - Nav2

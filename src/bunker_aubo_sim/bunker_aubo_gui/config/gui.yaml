@@ -1,0 +1,66 @@
+gui:
+  window_title: "BUNKER + AUBO-i5 Operator Console"
+  image_refresh_hz: 30.0
+  lidar_refresh_hz: 10.0
+  lidar_max_points: 40000
+  status_refresh_hz: 4.0
+
+base:
+  cmd_vel_topic: /cmd_vel
+  odom_topic: /odometry/filtered
+  publish_rate: 20.0
+  default_linear: 0.4           # m/s
+  max_linear: 1.0
+  default_angular: 0.6          # rad/s
+  max_angular: 1.2
+
+arm:
+  action: /arm_controller/follow_joint_trajectory
+  joints: [shoulder_joint, upperArm_joint, foreArm_joint, wrist1_joint, wrist2_joint, wrist3_joint]
+  fallback_limits:
+    lower: [-3.04, -3.04, -3.04, -3.04, -3.04, -3.04]
+    upper: [3.04, 3.04, 3.04, 3.04, 3.04, 3.04]
+    velocity: [2.618, 2.618, 2.618, 3.1416, 3.1416, 3.1416]
+  velocity_scale: 0.3
+  min_move_time: 1.5            # s
+  named_poses:                  # rad, same joint order as above
+    home:    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]            # AUBO zero (arm straight up)
+    stowed:  [0.0, 1.0, 2.75, 1.6, 1.5708, -1.5708]
+    ready:   [0.0, 0.3, 1.85, 0.0, 1.5708, 0.0]
+    inspect: [0.0, 0.5, 1.6, 1.0, 1.5708, 0.0]
+
+gripper:
+  action: /gripper_controller/gripper_cmd
+  joints: [gripper_left_finger_joint, gripper_right_finger_joint]
+  max_opening: 0.08
+  slider_moves_gripper: true    # the slider commands the gripper when released (or after a click)
+  slider_delay_ms: 250          # pause before a click / arrow-key change is sent
+
+status_topics:
+  - [/clock, rosgraph_msgs/msg/Clock, 100.0]
+  - [/joint_states, sensor_msgs/msg/JointState, 50.0]
+  - [/odom, nav_msgs/msg/Odometry, 50.0]
+  - [/odometry/filtered, nav_msgs/msg/Odometry, 50.0]
+  - [/imu/data, sensor_msgs/msg/Imu, 200.0]
+  - [/lidar/points, sensor_msgs/msg/PointCloud2, 10.0]
+  - [/base_camera/color/image_raw, sensor_msgs/msg/Image, 15.0]
+  - [/base_camera/depth/image_rect_raw, sensor_msgs/msg/Image, 15.0]
+  - [/wrist_camera/color/image_raw, sensor_msgs/msg/Image, 15.0]
+  - [/wrist_camera/depth/image_rect_raw, sensor_msgs/msg/Image, 15.0]
+  - [/map, nav_msgs/msg/OccupancyGrid, 0.5]
+  - [/rtabmap/info, rtabmap_msgs/msg/Info, 1.0]
+
+cameras:
+  base:
+    color: /base_camera/color/image_raw
+    depth: /base_camera/depth/image_rect_raw
+  wrist:
+    color: /wrist_camera/color/image_raw
+    depth: /wrist_camera/depth/image_rect_raw
+
+lidar_topic: /lidar/points
+
+lidar_view:                     # 3D view next to the status table
+  show_robot: true              # robot model from /robot_description, posed from /joint_states
+  color_min_z: 0.0              # cloud colour range, height above the floor in m
+  color_max_z: 2.5

@@ -1,0 +1,28 @@
+# Everything below is also installed by:
+#   rosdep install --from-paths src --ignore-src -y --rosdistro jazzy
+ros-jazzy-desktop
+ros-jazzy-ros-gz
+ros-jazzy-gz-ros2-control
+ros-jazzy-ros2-control
+ros-jazzy-ros2-controllers
+ros-jazzy-xacro
+ros-jazzy-robot-state-publisher
+ros-jazzy-joint-state-publisher
+ros-jazzy-joint-state-publisher-gui
+ros-jazzy-robot-localization
+ros-jazzy-rtabmap-ros
+ros-jazzy-nav2-map-server
+ros-jazzy-nav2-lifecycle-manager
+ros-jazzy-navigation2
+ros-jazzy-pointcloud-to-laserscan
+ros-jazzy-tf2-tools
+ros-jazzy-rosbag2-storage-mcap
+ros-jazzy-teleop-twist-keyboard
+python3-pyqt5
+python3-pyqtgraph
+python3-opengl
+python3-numpy
+python3-scipy
+python3-matplotlib
+python3-yaml
+python3-pytest

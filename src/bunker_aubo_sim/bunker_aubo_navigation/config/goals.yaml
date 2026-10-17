@@ -1,0 +1,16 @@
+# Named goals in the indoor_office world, written in Gazebo world coordinates (x, y in m,
+# yaw in degrees) so they can be read off the floor plan (docs/images/indoor_office_floorplan.png).
+# go_to converts them into the map frame: RTAB-Map (and a map saved from it) puts the map
+# origin at the robot's start pose, i.e. the spawn pose below.
+
+spawn: {x: -7.5, y: -1.0, yaw: 90.0}     # same defaults as sim.launch.py
+
+goals:
+  start:          {x: -7.5, y: -1.0, yaw: 90.0}
+  north_corridor: {x:  0.0, y:  3.5, yaw: 0.0}
+  east_corridor:  {x:  7.5, y:  0.0, yaw: -90.0}
+  south_corridor: {x:  3.0, y: -3.5, yaw: 180.0}
+  meeting_room:   {x: -0.4, y: -1.6, yaw: 90.0}   # through the south door, tight: 0.77 m clearance
+
+# one lap of the outer corridor, ends back at the start (good for a loop closure)
+patrol: [north_corridor, east_corridor, south_corridor, start]

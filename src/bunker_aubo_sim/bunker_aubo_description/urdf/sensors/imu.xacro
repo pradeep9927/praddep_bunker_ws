@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="imu_noise_axis" params="axis stddev bias_mean bias_stddev">
+    <xacro:element xacro:name="${axis}">
+      <noise type="gaussian">
+        <mean>0.0</mean>
+        <stddev>${stddev}</stddev>
+        <bias_mean>${bias_mean}</bias_mean>
+        <bias_stddev>${bias_stddev}</bias_stddev>
+      </noise>
+    </xacro:element>
+  </xacro:macro>
+
+  <xacro:macro name="imu_sensor" params="name parent *origin">
+    <xacro:property name="c" value="${sensors_cfg['imu']}"/>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <geometry><box size="0.04 0.03 0.012"/></geometry>
+        <material name="imu_orange"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.04 0.03 0.012"/></geometry>
+      </collision>
+      <xacro:box_inertia m="0.02" x="0.04" y="0.03" z="0.012">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:box_inertia>
+    </link>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>${c['update_rate']}</update_rate>
+        <visualize>false</visualize>
+        <topic>imu</topic>
+        <gz_frame_id>${name}_link</gz_frame_id>
+        <imu>
+          <angular_velocity>
+            <xacro:imu_noise_axis axis="x" stddev="${c['gyro_noise_stddev']}" bias_mean="${c['gyro_bias_mean']}" bias_stddev="${c['gyro_bias_stddev']}"/>
+            <xacro:imu_noise_axis axis="y" stddev="${c['gyro_noise_stddev']}" bias_mean="${c['gyro_bias_mean']}" bias_stddev="${c['gyro_bias_stddev']}"/>
+            <xacro:imu_noise_axis axis="z" stddev="${c['gyro_noise_stddev']}" bias_mean="${c['gyro_bias_mean']}" bias_stddev="${c['gyro_bias_stddev']}"/>
+          </angular_velocity>
+          <linear_acceleration>
+            <xacro:imu_noise_axis axis="x" stddev="${c['accel_noise_stddev']}" bias_mean="${c['accel_bias_mean']}" bias_stddev="${c['accel_bias_stddev']}"/>
+            <xacro:imu_noise_axis axis="y" stddev="${c['accel_noise_stddev']}" bias_mean="${c['accel_bias_mean']}" bias_stddev="${c['accel_bias_stddev']}"/>
+            <xacro:imu_noise_axis axis="z" stddev="${c['accel_noise_stddev']}" bias_mean="${c['accel_bias_mean']}" bias_stddev="${c['accel_bias_stddev']}"/>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

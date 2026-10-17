@@ -1,0 +1,22 @@
+# colcon
+build/
+install/
+log/
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+# ROS bags, RTAB-Map databases and large outputs (store externally, link in docs/results)
+*.db
+*.db.back
+*.mcap
+*.db3
+bags/
+frames_*.pdf
+frames_*.gv
+# editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

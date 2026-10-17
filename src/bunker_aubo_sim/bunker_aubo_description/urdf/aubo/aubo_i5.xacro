@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="aubo_lim"     value="3.04"/>
+  <xacro:property name="aubo_vel_big" value="2.618"/>  <xacro:property name="aubo_vel_wr"  value="3.1416"/>  <xacro:property name="aubo_mesh"    value="file://$(find bunker_aubo_description)/meshes/aubo_i5"/>
+
+  <xacro:macro name="aubo_link" params="name mesh mass cx cy cz ixx iyy izz ixy:=0 ixz:=0 iyz:=0 material:=aubo_white">
+    <link name="${name}">
+      <inertial>
+        <origin xyz="${cx} ${cy} ${cz}" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><mesh filename="${aubo_mesh}/visual/${mesh}.stl"/></geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><mesh filename="${aubo_mesh}/collision/${mesh}.stl"/></geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="aubo_i5" params="parent *origin">
+
+    <joint name="aubo_mount_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="aubo_base_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <xacro:aubo_link name="aubo_base_link" mesh="base_link" mass="0.83419"
+                     cx="0" cy="0.0015384" cz="0.020951"
+                     ixx="0.0014414" iyy="0.0013542" izz="0.0024659" iyz="-1.4364e-05"
+                     material="aubo_blue"/>
+
+    <xacro:aubo_link name="shoulder_Link" mesh="shoulder_Link" mass="1.57658"
+                     cx="0" cy="0.0053496" cz="-0.0088369"
+                     ixx="0.0040640" iyy="0.0039286" izz="0.0030870" iyz="-0.00016015"/>
+
+    <xacro:aubo_link name="upperArm_Link" mesh="upperArm_Link" mass="4.04176"
+                     cx="0.20400" cy="0" cz="0.012764"
+                     ixx="0.0096540" iyy="0.14499" izz="0.14261"/>
+
+    <xacro:aubo_link name="foreArm_Link" mesh="foreArm_Link" mass="2.27146"
+                     cx="0.18892" cy="0" cz="0.098103"
+                     ixx="0.0021432" iyy="0.044393" izz="0.044127" ixz="-0.00073121"/>
+
+    <xacro:aubo_link name="wrist1_Link" mesh="wrist1_Link" mass="0.50048"
+                     cx="0" cy="0.0062481" cz="-0.0039237"
+                     ixx="0.00071195" iyy="0.00040588" izz="0.00068557" iyz="-2.3081e-05"/>
+
+    <xacro:aubo_link name="wrist2_Link" mesh="wrist2_Link" mass="0.50048"
+                     cx="0" cy="-0.0062481" cz="-0.0039237"
+                     ixx="0.00071195" iyy="0.00040588" izz="0.00068557" iyz="2.3081e-05"/>
+
+    <xacro:aubo_link name="wrist3_Link" mesh="wrist3_Link" mass="0.15831"
+                     cx="0" cy="0.00017579" cz="-0.021329"
+                     ixx="7.3138e-05" iyy="7.1953e-05" izz="0.00010877"
+                     material="aubo_blue"/>
+
+    <joint name="shoulder_joint" type="revolute">
+      <parent link="aubo_base_link"/>
+      <child link="shoulder_Link"/>
+      <origin xyz="0 0 0.122" rpy="0 0 ${pi}"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="150.0" velocity="${aubo_vel_big}"/>
+      <dynamics damping="1.0" friction="0.0"/>
+    </joint>
+
+    <joint name="upperArm_joint" type="revolute">
+      <parent link="shoulder_Link"/>
+      <child link="upperArm_Link"/>
+      <origin xyz="0 0.1215 0" rpy="${-pi/2} ${-pi/2} 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="150.0" velocity="${aubo_vel_big}"/>
+      <dynamics damping="1.0" friction="0.0"/>
+    </joint>
+
+    <joint name="foreArm_joint" type="revolute">
+      <parent link="upperArm_Link"/>
+      <child link="foreArm_Link"/>
+      <origin xyz="0.408 0 0" rpy="${-pi} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="150.0" velocity="${aubo_vel_big}"/>
+      <dynamics damping="1.0" friction="0.0"/>
+    </joint>
+
+    <joint name="wrist1_joint" type="revolute">
+      <parent link="foreArm_Link"/>
+      <child link="wrist1_Link"/>
+      <origin xyz="0.376 0 0" rpy="${pi} 0 ${pi/2}"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="28.0" velocity="${aubo_vel_wr}"/>
+      <dynamics damping="0.3" friction="0.0"/>
+    </joint>
+
+    <joint name="wrist2_joint" type="revolute">
+      <parent link="wrist1_Link"/>
+      <child link="wrist2_Link"/>
+      <origin xyz="0 0.1025 0" rpy="${-pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="28.0" velocity="${aubo_vel_wr}"/>
+      <dynamics damping="0.3" friction="0.0"/>
+    </joint>
+
+    <joint name="wrist3_joint" type="revolute">
+      <parent link="wrist2_Link"/>
+      <child link="wrist3_Link"/>
+      <origin xyz="0 -0.094 0" rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-aubo_lim}" upper="${aubo_lim}" effort="28.0" velocity="${aubo_vel_wr}"/>
+      <dynamics damping="0.3" friction="0.0"/>
+    </joint>
+
+    <link name="tool0"/>
+    <joint name="tool0_joint" type="fixed">
+      <parent link="wrist3_Link"/>
+      <child link="tool0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>

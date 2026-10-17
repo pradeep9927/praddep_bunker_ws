@@ -1,0 +1,13 @@
+# Joint positions (rad / m) at spawn time (gz_ros2_control initial state).
+# "stowed": folded over the deck, below the LiDAR, wrist camera upright and looking forward
+# ~9 deg down, 12 cm beside the mast. Checked collision-free with self_collision.py
+# (the previous pose 1.2 / 2.77 / -1.57 / -1.57 / 0 pushed wrist2/wrist3 ~2 cm into the upper arm).
+# Keep it equal to named_poses.stowed in bunker_aubo_gui/config/gui.yaml.
+shoulder_joint: 0.0
+upperArm_joint: 1.0
+foreArm_joint: 2.75
+wrist1_joint: 1.6
+wrist2_joint: 1.5708
+wrist3_joint: -1.5708
+gripper_left_finger_joint: 0.04
+gripper_right_finger_joint: 0.04

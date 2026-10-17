@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="wheel_iface" params="name">
+    <joint name="${name}">
+      <command_interface name="velocity">
+        <param name="min">-22.0</param>
+        <param name="max">22.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="position_iface" params="name">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${initial_positions[name]}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="bunker_aubo_ros2_control" params="hardware_plugin">
+    <ros2_control name="BunkerAuboSystem" type="system">
+      <hardware>
+        <plugin>${hardware_plugin}</plugin>
+      </hardware>
+
+      <xacro:wheel_iface name="left_wheel_1_joint"/>
+      <xacro:wheel_iface name="left_wheel_2_joint"/>
+      <xacro:wheel_iface name="left_wheel_3_joint"/>
+      <xacro:wheel_iface name="left_wheel_4_joint"/>
+      <xacro:wheel_iface name="right_wheel_1_joint"/>
+      <xacro:wheel_iface name="right_wheel_2_joint"/>
+      <xacro:wheel_iface name="right_wheel_3_joint"/>
+      <xacro:wheel_iface name="right_wheel_4_joint"/>
+
+      <xacro:position_iface name="shoulder_joint"/>
+      <xacro:position_iface name="upperArm_joint"/>
+      <xacro:position_iface name="foreArm_joint"/>
+      <xacro:position_iface name="wrist1_joint"/>
+      <xacro:position_iface name="wrist2_joint"/>
+      <xacro:position_iface name="wrist3_joint"/>
+
+      <xacro:position_iface name="gripper_left_finger_joint"/>
+      <xacro:position_iface name="gripper_right_finger_joint"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <material name="bunker_grey"><color rgba="0.30 0.32 0.34 1.0"/></material>
+  <material name="track_black"><color rgba="0.06 0.06 0.06 1.0"/></material>
+  <material name="aluminium"><color rgba="0.75 0.76 0.78 1.0"/></material>
+  <material name="aubo_white"><color rgba="0.92 0.92 0.92 1.0"/></material>
+  <material name="aubo_blue"><color rgba="0.10 0.35 0.70 1.0"/></material>
+  <material name="gripper_dark"><color rgba="0.15 0.15 0.18 1.0"/></material>
+  <material name="sensor_black"><color rgba="0.08 0.08 0.08 1.0"/></material>
+  <material name="realsense_grey"><color rgba="0.55 0.55 0.58 1.0"/></material>
+  <material name="imu_orange"><color rgba="0.95 0.50 0.10 1.0"/></material>
+</robot>

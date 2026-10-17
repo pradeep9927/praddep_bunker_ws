@@ -1,0 +1,86 @@
+node:
+  frame_id: base_footprint
+  odom_frame_id: odom
+  map_frame_id: map
+  publish_tf: true
+  map_always_update: true        # republish /map every update, also while the robot stands still
+  tf_delay: 0.05                 # map->odom published at 20 Hz
+  wait_for_transform: 0.5
+  odom_tf_linear_variance: 0.001
+  odom_tf_angular_variance: 0.001
+  subscribe_depth: false
+  subscribe_rgb: false
+  subscribe_rgbd: true
+  rgbd_cameras: 0
+  subscribe_scan_cloud: true
+  subscribe_scan: false
+  subscribe_odom_info: false
+  approx_sync: true
+  sync_queue_size: 30
+  topic_queue_size: 10
+  scan_cloud_max_points: 0
+
+rtabmap:
+  Rtabmap/DetectionRate: "1"
+  Rtabmap/TimeThr: "0"
+  Rtabmap/MemoryThr: "0"
+  Rtabmap/LoopThr: "0.11"
+  Mem/STMSize: "30"
+  Mem/NotLinkedNodesKept: "false"
+  RGBD/LinearUpdate: "0.10"             # add a node every 10 cm ...
+  RGBD/AngularUpdate: "0.10"            # ... or every 0.1 rad
+  RGBD/OptimizeMaxError: "3.0"
+  RGBD/CreateOccupancyGrid: "true"
+
+  Reg/Strategy: "2"
+  Reg/Force3DoF: "true"
+  RGBD/NeighborLinkRefining: "true"
+  RGBD/ProximityBySpace: "true"
+  RGBD/ProximityMaxGraphDepth: "0"
+  RGBD/ProximityPathMaxNeighbors: "10"
+  RGBD/LocalRadius: "5"
+
+  Kp/MaxFeatures: "600"
+  Vis/MaxFeatures: "1000"
+  Vis/MinInliers: "15"
+  Vis/EstimationType: "1"
+  Vis/InlierDistance: "0.1"
+  Vis/MaxDepth: "6.0"
+
+  Icp/VoxelSize: "0.1"
+  Icp/PointToPlane: "true"
+  Icp/PointToPlaneK: "20"
+  Icp/PointToPlaneRadius: "0"
+  Icp/Iterations: "30"
+  Icp/Epsilon: "0.001"
+  Icp/MaxCorrespondenceDistance: "0.3"
+  Icp/CorrespondenceRatio: "0.2"
+  Icp/MaxTranslation: "1.0"
+  Icp/MaxRotation: "0.8"
+  Icp/RangeMin: "0.8"
+  Icp/RangeMax: "25"
+  Icp/PointToPlaneGroundNormalsUp: "0.8"
+  Mem/LaserScanVoxelSize: "0.1"
+  Mem/LaserScanNormalK: "20"
+
+  Optimizer/GravitySigma: "0.3"
+  Optimizer/Robust: "false"
+
+  Grid/Sensor: "2"
+  Grid/3D: "true"
+  Grid/RayTracing: "true"
+  Grid/CellSize: "0.05"
+  Grid/RangeMin: "0.6"
+  Grid/RangeMax: "6.0"                  # far floor hits are the ones that turn into ghost obstacles
+  Grid/DepthDecimation: "4"
+  Grid/NormalsSegmentation: "true"     # ground by surface normal, robust to body pitch while driving
+  Grid/MaxGroundAngle: "30"
+  Grid/MaxGroundHeight: "0.20"         # was 0.08: <1 deg of pitch lifted far floor above it
+  Grid/MaxObstacleHeight: "2.0"
+  Grid/MinClusterSize: "5"
+  Grid/NoiseFilteringRadius: "0.1"
+  Grid/NoiseFilteringMinNeighbors: "3"
+  Grid/FootprintLength: "1.10"
+  Grid/FootprintWidth: "0.85"
+  Grid/FootprintHeight: "1.60"
+  GridGlobal/MinSize: "20"

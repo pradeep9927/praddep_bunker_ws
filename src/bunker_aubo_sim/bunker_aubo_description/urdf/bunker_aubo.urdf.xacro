@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot name="bunker_aubo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="sim_gazebo" default="true"/>
+  <xacro:arg name="controllers_config" default=""/>
+  <xacro:arg name="sensors_config" default="$(find bunker_aubo_description)/config/sensors.yaml"/>
+  <xacro:arg name="initial_positions" default="$(find bunker_aubo_description)/config/initial_positions.yaml"/>
+
+  <xacro:property name="sensors_cfg" value="${xacro.load_yaml('$(arg sensors_config)')}"/>
+  <xacro:property name="initial_positions" value="${xacro.load_yaml('$(arg initial_positions)')}"/>
+
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/common/inertial_macros.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/common/materials.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/bunker/bunker_base.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/aubo/aubo_i5.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/gripper/parallel_gripper.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/sensors/imu.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/sensors/vlp16.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/sensors/d435.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/control/ros2_control.xacro"/>
+  <xacro:include filename="$(find bunker_aubo_description)/urdf/gazebo.xacro"/>
+
+  <xacro:bunker_base/>
+
+  <xacro:aubo_i5 parent="arm_mount_link">
+    <origin xyz="0 0 ${arm_mount_thick}" rpy="0 0 0"/>
+  </xacro:aubo_i5>
+
+  <xacro:parallel_gripper parent="tool0">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:parallel_gripper>
+
+  <xacro:imu_sensor name="imu" parent="base_link">
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+  </xacro:imu_sensor>
+
+  <xacro:vlp16 name="lidar" parent="sensor_mast_link">
+    <origin xyz="0 0 ${mast_top - deck_height + vlp_h / 2.0}" rpy="0 0 0"/>
+  </xacro:vlp16>
+
+  <xacro:d435 name="base_camera" parent="sensor_mast_link">
+    <origin xyz="${mast_size / 2.0 + 0.025} 0 ${0.62 - deck_height}" rpy="0 ${radians(10)} 0"/>
+  </xacro:d435>
+
+  <xacro:d435 name="wrist_camera" parent="tool0">
+    <origin xyz="-0.055 0 0.040" rpy="0 ${-pi/2} 0"/>
+  </xacro:d435>
+
+  <xacro:if value="$(arg sim_gazebo)">
+    <xacro:bunker_aubo_ros2_control hardware_plugin="gz_ros2_control/GazeboSimSystem"/>
+    <xacro:bunker_aubo_gazebo controllers_config="$(arg controllers_config)"/>
+  </xacro:if>
+
+</robot>

@@ -1,0 +1,41 @@
+imu:
+  update_rate: 200.0
+  gyro_noise_stddev: 0.0009
+  gyro_bias_mean: 0.0002          # rad/s
+  gyro_bias_stddev: 0.00005
+  accel_noise_stddev: 0.017       # m/s^2
+  accel_bias_mean: 0.01
+  accel_bias_stddev: 0.001
+
+lidar:                     # Velodyne VLP-16 (Puck)
+  update_rate: 10.0               # 5-20 Hz on the real sensor
+  horizontal_samples: 900
+  vertical_samples: 16
+  vertical_min_angle: -0.261799   # -15 deg
+  vertical_max_angle: 0.261799    # +15 deg
+  range_min: 0.40
+  range_max: 30.0
+  range_resolution: 0.003
+  noise_stddev: 0.01
+
+cameras:
+  base_camera:
+    update_rate: 15.0
+    width: 640
+    height: 480
+    horizontal_fov: 1.2112        # 69.4 deg (D435 RGB HFOV)
+    rgb_noise_stddev: 0.007
+    depth_near: 0.105             # D435 minimum depth
+    depth_far: 10.0
+    clip_near: 0.02
+    clip_far: 30.0
+  wrist_camera:
+    update_rate: 15.0
+    width: 640
+    height: 480
+    horizontal_fov: 1.2112
+    rgb_noise_stddev: 0.007
+    depth_near: 0.105
+    depth_far: 10.0
+    clip_near: 0.02
+    clip_far: 30.0

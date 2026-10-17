@@ -1,0 +1,20 @@
+# Parameters of the helper nodes started by slam.launch.py (RTAB-Map itself is in rtabmap.yaml).
+# use_sim_time is added by the launch file.
+
+rgbd_sync:                       # one per camera, pairs RGB + depth + camera_info of that camera
+  approx_sync: true
+  approx_sync_max_interval: 0.02 # s, RGB and depth come from the same Gazebo sensor
+  sync_queue_size: 10
+  topic_queue_size: 5
+  compressed_rate: 0.0
+
+multi_rgbd_sync:                 # groups both cameras into one RGBDImages message for RTAB-Map
+  input_topics: [/base_camera/rgbd_image/compressed, /wrist_camera/rgbd_image/compressed]
+  camera_names: [base_camera, wrist_camera]
+  max_dt: 0.05                   # s, max stamp difference between the two cameras
+  camera_timeout: 0.5            # s, after this a silent camera is replaced by a blank frame
+  pending_timeout: 0.3           # s, how long to wait for the partner frame
+
+lidar_self_filter:               # removes LiDAR returns on the robot's own arm
+  margin: 0.06                   # m, inflation of the arm collision boxes
+  base_frame: base_footprint

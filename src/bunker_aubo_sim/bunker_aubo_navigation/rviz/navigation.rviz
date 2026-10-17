@@ -1,0 +1,195 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Help Height: 0
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: nav2_rviz_plugins/Navigation 2
+    Name: Navigation 2
+  - Class: rviz_common/Time
+    Name: Time
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 1
+      Plane Cell Count: 40
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/Map
+      Name: Map (/map)
+      Enabled: true
+      Topic:
+        Value: /map
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Alpha: 1.0
+      Color Scheme: map
+      Draw Behind: true
+    - Class: rviz_default_plugins/Map
+      Name: Global costmap
+      Enabled: true
+      Topic:
+        Value: /global_costmap/costmap
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Alpha: 0.35
+      Color Scheme: costmap
+      Draw Behind: false
+    - Class: rviz_default_plugins/Map
+      Name: Local costmap
+      Enabled: true
+      Topic:
+        Value: /local_costmap/costmap
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Alpha: 0.6
+      Color Scheme: costmap
+      Draw Behind: false
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+        Depth: 1
+      Visual Enabled: true
+      Collision Enabled: false
+    - Class: rviz_default_plugins/Polygon
+      Name: Footprint (local costmap)
+      Enabled: true
+      Topic:
+        Value: /local_costmap/published_footprint
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color: 0; 255; 0
+    - Class: rviz_default_plugins/Path
+      Name: Global plan (/plan)
+      Enabled: true
+      Topic:
+        Value: /plan
+        Depth: 1
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color: 0; 120; 255
+      Line Style: Billboards
+      Line Width: 0.05
+    - Class: rviz_default_plugins/Path
+      Name: Path being followed (/received_global_plan)
+      Enabled: true
+      Topic:
+        Value: /received_global_plan
+        Depth: 1
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color: 255; 140; 0
+      Line Style: Billboards
+      Line Width: 0.04
+    - Class: rviz_default_plugins/PointStamped
+      Name: Look-ahead point (/lookahead_point)
+      Enabled: true
+      Topic:
+        Value: /lookahead_point
+        Depth: 1
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color: 255; 0; 255
+      Radius: 0.1
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Voxel obstacles (/local_costmap/voxel_marked_cloud)
+      Enabled: false
+      Topic:
+        Value: /local_costmap/voxel_marked_cloud
+        Depth: 1
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Style: Boxes
+      Size (m): 0.05
+      Color Transformer: AxisColor
+      Axis: Z
+      Position Transformer: XYZ
+    - Class: rviz_default_plugins/PointCloud2
+      Name: LiDAR, self filtered
+      Enabled: true
+      Topic:
+        Value: /lidar/points_filtered
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Style: Points
+      Size (Pixels): 2
+      Color Transformer: AxisColor
+      Axis: Z
+      Autocompute Value Bounds: false
+      Min Value: -0.9
+      Max Value: 1.6
+      Decay Time: 0
+      Position Transformer: XYZ
+    - Class: rviz_default_plugins/LaserScan
+      Name: Scan for AMCL (/scan)
+      Enabled: true
+      Topic:
+        Value: /scan
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Style: Points
+      Size (Pixels): 3
+      Color Transformer: FlatColor
+      Color: 255; 50; 50
+    - Class: nav2_rviz_plugins/ParticleCloud
+      Name: AMCL particles
+      Enabled: true
+      Topic:
+        Value: /particle_cloud
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Color: 0; 180; 0
+      Shape: Arrow (Flat)
+      Arrow Length: 0.25
+    - Class: rviz_default_plugins/PoseArray
+      Name: Waypoints
+      Enabled: true
+      Topic:
+        Value: /waypoints
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+  Enabled: true
+  Global Options:
+    Fixed Frame: map
+    Background Color: 40; 40; 45
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
+    - Class: nav2_rviz_plugins/GoalTool
+    - Class: rviz_default_plugins/Measure
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Current View
+      Scale: 30
+      X: 0
+      Y: 0
+      Target Frame: base_footprint
+    Saved: ~
+Window Geometry:
+  Height: 1000
+  Width: 1600

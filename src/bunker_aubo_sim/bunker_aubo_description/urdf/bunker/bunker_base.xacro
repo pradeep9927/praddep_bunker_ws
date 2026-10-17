@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="wheel_radius"      value="0.075"/>
+  <xacro:property name="wheel_width"       value="0.12"/>
+  <xacro:property name="wheel_mass"        value="2.0"/>
+  <xacro:property name="track_y"           value="0.315"/>  <xacro:property name="wheel_x_positions" value="${[0.255, 0.085, -0.085, -0.255]}"/>
+
+  <xacro:property name="chassis_mass"      value="110.0"/>
+  <xacro:property name="deck_height"       value="0.358"/>  <xacro:property name="ground_clearance"  value="0.09"/>
+  <xacro:property name="body_length"       value="0.90"/>
+  <xacro:property name="body_width"        value="0.48"/>
+  <xacro:property name="track_length"      value="1.00"/>
+  <!-- Track shell collision, measured from the BUNKER mesh (ground-referenced, metres).
+       Each track = straight upper run + sloped front and rear ends. Nothing of the shell
+       touches the floor (lowest corner 2 cm up), the 4 road wheels carry the robot. -->
+  <xacro:property name="track_cy"          value="0.32"/>   <!-- shell centre (y), mesh: 0.25 .. 0.39 -->
+  <xacro:property name="track_width"       value="0.14"/>
+  <xacro:property name="track_top"         value="0.39"/>
+  <xacro:property name="track_col_bottom"  value="0.16"/>   <!-- upper run: above the wheels (0.15) -->
+  <xacro:property name="track_run_front"   value="0.38"/>
+  <xacro:property name="track_run_rear"    value="-0.36"/>
+  <xacro:property name="track_end_thick"   value="0.13"/>
+  <!-- sloped ends: lower edge from (x0, z0) to (x1, z1) -->
+  <xacro:property name="front_x0" value="0.33"/>  <xacro:property name="front_z0" value="0.02"/>
+  <xacro:property name="front_x1" value="0.50"/>  <xacro:property name="front_z1" value="0.19"/>
+  <xacro:property name="rear_x0"  value="-0.33"/> <xacro:property name="rear_z0"  value="0.02"/>
+  <xacro:property name="rear_x1"  value="-0.51"/> <xacro:property name="rear_z1"  value="0.17"/>
+  <xacro:property name="mast_x"            value="0.36"/>
+  <xacro:property name="mast_size"         value="0.04"/>
+  <xacro:property name="mast_top"          value="0.90"/>
+
+  <xacro:property name="arm_mount_x"       value="-0.10"/>
+  <xacro:property name="arm_mount_size"    value="0.22"/>
+  <xacro:property name="arm_mount_thick"   value="0.015"/>
+
+  <xacro:property name="bl" value="${wheel_radius}"/>
+
+  <!-- Collision boxes of one track shell (all inside base_link). -->
+  <xacro:macro name="track_collision" params="side y">
+    <collision name="${side}_track_run_collision">
+      <origin xyz="${(track_run_front + track_run_rear) / 2.0} ${y} ${(track_col_bottom + track_top) / 2.0 - bl}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${track_run_front - track_run_rear} ${track_width} ${track_top - track_col_bottom}"/>
+      </geometry>
+    </collision>
+    <xacro:track_end side="${side}" end="front" y="${y}" x0="${front_x0}" z0="${front_z0}" x1="${front_x1}" z1="${front_z1}"/>
+    <xacro:track_end side="${side}" end="rear"  y="${y}" x0="${rear_x0}"  z0="${rear_z0}"  x1="${rear_x1}"  z1="${rear_z1}"/>
+  </xacro:macro>
+
+  <!-- A box whose bottom face runs along the sloped lower edge (x0,z0)->(x1,z1) of a track end
+       and that is track_end_thick deep into the track. -->
+  <xacro:macro name="track_end" params="side end y x0 z0 x1 z1">
+    <xacro:property name="end_len" value="${sqrt((x1 - x0)**2 + (z1 - z0)**2)}"/>
+    <xacro:property name="ux"  value="${(x1 - x0) / end_len}"/>
+    <xacro:property name="uz"  value="${(z1 - z0) / end_len}"/>
+    <!-- inward normal: the edge direction turned towards the robot centre and upwards -->
+    <xacro:property name="sgn" value="${1.0 if x1 > x0 else -1.0}"/>
+    <xacro:property name="nx"  value="${-uz * sgn}"/>
+    <xacro:property name="nz"  value="${ux * sgn}"/>
+    <collision name="${side}_track_${end}_collision">
+      <origin xyz="${(x0 + x1) / 2.0 + nx * track_end_thick / 2.0} ${y} ${(z0 + z1) / 2.0 + nz * track_end_thick / 2.0 - bl}"
+              rpy="0 ${atan2(nx, nz)} 0"/>
+      <geometry>
+        <box size="${end_len} ${track_width} ${track_end_thick}"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <xacro:macro name="bunker_base">
+
+    <link name="base_footprint"/>
+
+    <joint name="base_footprint_joint" type="fixed">
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+      <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="base_link">
+      <visual>
+        <origin xyz="0 0 ${-bl}" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find bunker_aubo_description)/meshes/bunker/bunker_body.stl"/>
+        </geometry>
+        <material name="bunker_grey"/>
+      </visual>
+
+      <collision name="chassis_collision">
+        <origin xyz="0 0 ${(ground_clearance + deck_height) / 2.0 - bl}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${body_length} ${body_width} ${deck_height - ground_clearance}"/>
+        </geometry>
+      </collision>
+      <xacro:track_collision side="left"  y="${track_cy}"/>
+      <xacro:track_collision side="right" y="${-track_cy}"/>
+
+      <xacro:box_inertia m="${chassis_mass}" x="${track_length}" y="0.78" z="0.30">
+        <origin xyz="0 0 ${0.19 - bl}" rpy="0 0 0"/>
+      </xacro:box_inertia>
+    </link>
+
+    <xacro:macro name="road_wheel" params="side index x y">
+      <link name="${side}_wheel_${index}_link">
+        <visual>
+          <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+          <material name="track_black"/>
+        </visual>
+        <!-- Visual only: hub cap with two spokes on the outside of the track, so the wheel (and
+             therefore the track drive) is seen turning in Gazebo and RViz. No collision. -->
+        <xacro:property name="hub_s" value="${1.0 if y > 0 else -1.0}"/>
+        <xacro:property name="hub_y" value="${hub_s * 0.394 - y}"/>
+        <visual>
+          <origin xyz="0 ${hub_y} 0" rpy="${pi/2} 0 0"/>
+          <geometry><cylinder radius="0.058" length="0.006"/></geometry>
+          <material name="aluminium"/>
+        </visual>
+        <visual>
+          <origin xyz="0 ${hub_y + hub_s * 0.005} 0" rpy="0 0 0"/>
+          <geometry><box size="0.105 0.006 0.016"/></geometry>
+          <material name="imu_orange"/>
+        </visual>
+        <visual>
+          <origin xyz="0 ${hub_y + hub_s * 0.005} 0" rpy="0 0 0"/>
+          <geometry><box size="0.016 0.006 0.105"/></geometry>
+          <material name="imu_orange"/>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+          <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        </collision>
+        <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}">
+          <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        </xacro:cylinder_inertia>
+      </link>
+
+      <joint name="${side}_wheel_${index}_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="${side}_wheel_${index}_link"/>
+        <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="120.0" velocity="22.0"/>
+        <dynamics damping="0.2" friction="0.0"/>
+      </joint>
+
+      <gazebo reference="${side}_wheel_${index}_link">
+        <mu1>0.6</mu1>
+        <mu2>1.0</mu2>
+        <fdir1>0 0 1</fdir1>
+      </gazebo>
+    </xacro:macro>
+
+    <xacro:road_wheel side="left"  index="1" x="${wheel_x_positions[0]}" y="${track_y}"/>
+    <xacro:road_wheel side="left"  index="2" x="${wheel_x_positions[1]}" y="${track_y}"/>
+    <xacro:road_wheel side="left"  index="3" x="${wheel_x_positions[2]}" y="${track_y}"/>
+    <xacro:road_wheel side="left"  index="4" x="${wheel_x_positions[3]}" y="${track_y}"/>
+    <xacro:road_wheel side="right" index="1" x="${wheel_x_positions[0]}" y="${-track_y}"/>
+    <xacro:road_wheel side="right" index="2" x="${wheel_x_positions[1]}" y="${-track_y}"/>
+    <xacro:road_wheel side="right" index="3" x="${wheel_x_positions[2]}" y="${-track_y}"/>
+    <xacro:road_wheel side="right" index="4" x="${wheel_x_positions[3]}" y="${-track_y}"/>
+
+    <link name="sensor_mast_link">
+      <visual>
+        <origin xyz="0 0 ${(mast_top - deck_height) / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${mast_size} ${mast_size} ${mast_top - deck_height}"/></geometry>
+        <material name="aluminium"/>
+      </visual>
+      <visual>
+        <origin xyz="0 0 ${mast_top - deck_height - 0.004}" rpy="0 0 0"/>
+        <geometry><box size="0.12 0.12 0.008"/></geometry>
+        <material name="aluminium"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${(mast_top - deck_height) / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${mast_size} ${mast_size} ${mast_top - deck_height}"/></geometry>
+      </collision>
+      <xacro:box_inertia m="1.2" x="${mast_size}" y="${mast_size}" z="${mast_top - deck_height}">
+        <origin xyz="0 0 ${(mast_top - deck_height) / 2.0}" rpy="0 0 0"/>
+      </xacro:box_inertia>
+    </link>
+
+    <joint name="sensor_mast_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="sensor_mast_link"/>
+      <origin xyz="${mast_x} 0 ${deck_height - bl}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="arm_mount_link">
+      <visual>
+        <origin xyz="0 0 ${arm_mount_thick / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${arm_mount_size} ${arm_mount_size} ${arm_mount_thick}"/></geometry>
+        <material name="aluminium"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${arm_mount_thick / 2.0}" rpy="0 0 0"/>
+        <geometry><box size="${arm_mount_size} ${arm_mount_size} ${arm_mount_thick}"/></geometry>
+      </collision>
+      <xacro:box_inertia m="1.5" x="${arm_mount_size}" y="${arm_mount_size}" z="${arm_mount_thick}">
+        <origin xyz="0 0 ${arm_mount_thick / 2.0}" rpy="0 0 0"/>
+      </xacro:box_inertia>
+    </link>
+
+    <joint name="arm_mount_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="arm_mount_link"/>
+      <origin xyz="${arm_mount_x} 0 ${deck_height - bl}" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>
